@@ -38,7 +38,7 @@ jobs:
             mkdir -p ~/antenbot/data
             cd ~/antenbot
             touch .env
-            echo ${{ secrets.ENV_FILE }} > .env
+            echo "${{ secrets.ENV_FILE }}" > .env
 
             # Pull the latest image
             docker pull ghcr.io/${{ github.repository_owner }}/antenbot:latest
