@@ -103,9 +103,12 @@ async def send_config_file(
             # Read and modify file content with generated UUIDs
             content = file.read().decode("utf-8")
 
-            modified_content = content.replace(
-                "${generateUniqueUUID()}", str(uuid.uuid4())
-            ).replace("${apn}", config["apn"])
+            modified_content = content
+            while "${generateUniqueUUID()}" in modified_content:
+                modified_content = modified_content.replace(
+                    "${generateUniqueUUID()}", str(uuid.uuid4()), 1
+                )
+            modified_content = modified_content.replace("${apn}", config["apn"])
 
             with tempfile.NamedTemporaryFile(
                 mode="w+", suffix=".mobileconfig", delete=False
