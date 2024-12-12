@@ -33,6 +33,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         [InlineKeyboardButton("همراه اول", callback_data="apn_mci")],
         [InlineKeyboardButton("ایرانسل", callback_data="apn_irancell")],
         [InlineKeyboardButton("رایتل", callback_data="apn_rightel")],
+        [InlineKeyboardButton("شاتل", callback_data="apn_shatel")],
+        [InlineKeyboardButton("سامانتل", callback_data="apn_samantel")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 

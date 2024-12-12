@@ -1,4 +1,6 @@
 import logging
+import tempfile
+import uuid
 from typing import TYPE_CHECKING, Optional
 
 from telegram import Message, Update
@@ -47,7 +49,7 @@ async def handle_apn_request(
         user_id=update.effective_user.id,
         username=update.effective_user.username or update.effective_user.first_name,
         action="apn_request",
-        details={"apn_type": message}
+        details={"apn_type": message},
     )
 
     # Store the requested APN in user data for later use
@@ -63,7 +65,7 @@ async def handle_apn_request(
         user_logger.log_action(
             user_id=update.effective_user.id,
             username=update.effective_user.username or update.effective_user.first_name,
-            action="subscription_required"
+            action="subscription_required",
         )
         await send_subscription_message(update)
         return
@@ -98,22 +100,39 @@ async def send_config_file(
 
         # Send the configuration file
         with open(config["file_path"], "rb") as file:
-            sent_message = await message.reply_document(
-                document=file,
-                filename=f"{apn}_config.txt",
-                caption=(
-                    f"فایل تنظیمات {apn.upper()} آماده است!\n\n"
-                    "🙏 اگر این ربات برای شما مفید بود، می‌توانید از طریق لینک زیر از ما حمایت کنید:\n"
-                    f"{DONATE_LINK}"
-                ),
+            # Read and modify file content with generated UUIDs
+            content = file.read().decode("utf-8")
+
+            modified_content = content.replace(
+                "${generateUniqueUUID()}", str(uuid.uuid4())
             )
+
+            with tempfile.NamedTemporaryFile(
+                mode="w+", suffix=".mobileconfig", delete=False
+            ) as temp_file:
+                temp_file.write(modified_content)
+                temp_file.flush()
+                temp_file.seek(0)
+
+            # Reopen temp file in binary mode for sending
+            with open(temp_file.name, "rb") as modified_file:
+                file = modified_file
+                sent_message = await message.reply_document(
+                    document=file,
+                    filename=f"{apn}_config.txt",
+                    caption=(
+                        f"فایل تنظیمات {apn.upper()} آماده است!\n\n"
+                        "🙏 اگر این ربات برای شما مفید بود، می‌توانید از طریق لینک زیر از ما حمایت کنید:\n"
+                        f"{DONATE_LINK}"
+                    ),
+                )
 
         # Log successful file send
         user_logger.log_action(
             user_id=update.effective_user.id,
             username=update.effective_user.username or update.effective_user.first_name,
             action="file_sent",
-            details={"apn_type": apn}
+            details={"apn_type": apn},
         )
 
         # Send tutorial link if enabled
@@ -123,13 +142,14 @@ async def send_config_file(
             and YOUTUBE_TUTORIAL_LINKS[0]
         ):
             await message.reply_text(f"📹 آموزش: {YOUTUBE_TUTORIAL_LINKS[0]}")
-            
+
             # Log tutorial link sent
             user_logger.log_action(
                 user_id=update.effective_user.id,
-                username=update.effective_user.username or update.effective_user.first_name,
+                username=update.effective_user.username
+                or update.effective_user.first_name,
                 action="tutorial_sent",
-                details={"apn_type": apn}
+                details={"apn_type": apn},
             )
 
     except Exception as e:
@@ -139,7 +159,7 @@ async def send_config_file(
             user_id=update.effective_user.id,
             username=update.effective_user.username or update.effective_user.first_name,
             action="error",
-            details={"error": str(e), "apn_type": apn}
+            details={"error": str(e), "apn_type": apn},
         )
         await message.reply_text(
             "متأسفانه در ارسال فایل خطایی رخ داد. لطفاً دوباره تلاش کنید."

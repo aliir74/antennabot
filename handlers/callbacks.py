@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 
-from config import NOT_SUBSCRIBED_MESSAGE, TELEGRAM_CHANNEL, APN_CONFIGS
+from config import APN_CONFIGS, NOT_SUBSCRIBED_MESSAGE, TELEGRAM_CHANNEL
 
-from .apn import send_config_file, get_message_from_update
+from .apn import send_config_file
 from .subscription import check_channel_subscription, send_subscription_message
 
 if TYPE_CHECKING:
@@ -18,16 +18,18 @@ async def handle_button_callback(
     query = update.callback_query
     if not query or not query.message:
         return
-        
+
     await query.answer()
 
     if query.data.startswith("apn_"):
         # Extract the APN type from callback data
         requested_apn = query.data.replace("apn_", "")
-        
+
         # Validate APN type
         if requested_apn not in APN_CONFIGS:
-            await query.message.reply_text("نوع سیم‌کارت نامعتبر است. لطفاً دوباره تلاش کنید.")
+            await query.message.reply_text(
+                "نوع سیم‌کارت نامعتبر است. لطفاً دوباره تلاش کنید."
+            )
             return
 
         # Store the requested APN in user data
@@ -59,6 +61,8 @@ async def handle_button_callback(
                     [InlineKeyboardButton("همراه اول", callback_data="apn_mci")],
                     [InlineKeyboardButton("ایرانسل", callback_data="apn_irancell")],
                     [InlineKeyboardButton("رایتل", callback_data="apn_rightel")],
+                    [InlineKeyboardButton("شاتل", callback_data="apn_shatel")],
+                    [InlineKeyboardButton("سامانتل", callback_data="apn_samantel")],
                 ]
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 await query.message.reply_text(

@@ -23,16 +23,24 @@ ADMIN_CHAT_IDS: List[int] = [
 # APN Configurations
 APN_CONFIGS: Dict[str, Dict[str, str]] = {
     "mci": {
-        "file_path": "files/mci_config.txt",
+        "file_path": "files/base.mobileconfig",
         "description": "MCI Configuration File",
     },
     "irancell": {
-        "file_path": "files/irancell_config.txt",
+        "file_path": "files/base.mobileconfig",
         "description": "Irancell Configuration File",
     },
     "rightel": {
-        "file_path": "files/rightel_config.txt",
+        "file_path": "files/base.mobileconfig",
         "description": "Rightel Configuration File",
+    },
+    "shatel": {
+        "file_path": "files/base.mobileconfig",
+        "description": "Shatel Configuration File",
+    },
+    "samantel": {
+        "file_path": "files/base.mobileconfig",
+        "description": "Samantel Configuration File",
     },
 }
 
@@ -43,7 +51,9 @@ WELCOME_MESSAGE = """سلام {first_name}! 👋
 گزینه‌های موجود:
 - همراه اول
 - ایرانسل
-- رایتل"""
+- رایتل
+- شاتل
+- سامانتل"""
 
 SUBSCRIPTION_MESSAGE = """لطفاً ابتدا در کانال {channel} عضو شوید!
 پس از عضویت، دکمه زیر را برای دریافت فایل کلیک کنید."""
@@ -51,7 +61,9 @@ SUBSCRIPTION_MESSAGE = """لطفاً ابتدا در کانال {channel} عضو
 INVALID_APN_MESSAGE = """متأسفانه این نوع سیم‌کارت شناسایی نشد. لطفاً از گزینه‌های زیر انتخاب کنید:
 - همراه اول
 - ایرانسل
-- رایتل"""
+- رایتل
+- شاتل
+- سامانتل"""
 
 NOT_SUBSCRIBED_MESSAGE = (
     "شما هنوز در کانال {channel} عضو نشده‌اید. لطفاً ع��و شوید و دوباره تلاش کنید!"
