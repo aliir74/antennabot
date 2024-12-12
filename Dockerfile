@@ -10,11 +10,11 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Create directories for files and data
+RUN mkdir -p files data
+
 # Copy the rest of the application
 COPY . .
-
-# Create directory for files if it doesn't exist
-RUN mkdir -p files
 
 # Command to run the bot
 CMD ["python", "bot.py"] 

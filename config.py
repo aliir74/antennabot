@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Dict, List
 
 from dotenv import load_dotenv
 
@@ -12,6 +12,14 @@ TELEGRAM_CHANNEL = os.getenv("TELEGRAM_CHANNEL", "@My_Channel")
 ENABLE_TUTORIAL_LINKS = os.getenv("ENABLE_TUTORIAL_LINKS", "true").lower() == "true"
 YOUTUBE_TUTORIAL_LINKS = os.getenv("YOUTUBE_TUTORIAL_LINKS", "").split(",")
 DONATE_LINK = os.getenv("DONATE_LINK", "")
+DATA_DIR = os.getenv("DATA_DIR", "/app/data")
+# Admin Configuration
+ADMIN_CHAT_IDS: List[int] = [
+    int(id_)
+    for id_ in os.getenv("ADMIN_CHAT_IDS", "").split(",")
+    if id_.strip().isdigit()
+]
+
 # APN Configurations
 APN_CONFIGS: Dict[str, Dict[str, str]] = {
     "mci": {
@@ -46,7 +54,7 @@ INVALID_APN_MESSAGE = """متأسفانه این نوع سیم‌کارت شنا
 - رایتل"""
 
 NOT_SUBSCRIBED_MESSAGE = (
-    "شما هنوز در کانال {channel} عضو نشده‌اید. لطفاً عضو شوید و دوباره تلاش کنید!"
+    "شما هنوز در کانال {channel} عضو نشده‌اید. لطفاً ع��و شوید و دوباره تلاش کنید!"
 )
 SEND_APN_AGAIN_MESSAGE = "لطفاً نوع سیم‌کارت خود را دوباره ارسال کنید."
 ERROR_SENDING_FILE = "متأسفانه در ارسال فایل خطایی رخ داد. لطفاً دوباره تلاش کنید."

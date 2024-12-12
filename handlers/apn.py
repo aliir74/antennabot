@@ -10,6 +10,7 @@ from config import (
     INVALID_APN_MESSAGE,
     YOUTUBE_TUTORIAL_LINKS,
 )
+from utils.logger import user_logger
 
 from .subscription import check_channel_subscription, send_subscription_message
 
@@ -32,7 +33,7 @@ async def handle_apn_request(
     update: Update, context: "ContextTypes.DEFAULT_TYPE"
 ) -> None:
     """Handle user messages and process APN requests."""
-    if not update.message or not update.message.text:
+    if not update.message or not update.message.text or not update.effective_user:
         return
 
     message = update.message.text.lower()
@@ -40,6 +41,14 @@ async def handle_apn_request(
     if message not in APN_CONFIGS:
         await update.message.reply_text(INVALID_APN_MESSAGE)
         return
+
+    # Log the APN request
+    user_logger.log_action(
+        user_id=update.effective_user.id,
+        username=update.effective_user.username or update.effective_user.first_name,
+        action="apn_request",
+        details={"apn_type": message}
+    )
 
     # Store the requested APN in user data for later use
     context.user_data["requested_apn"] = message
@@ -50,6 +59,12 @@ async def handle_apn_request(
     )
 
     if not is_subscribed:
+        # Log subscription request
+        user_logger.log_action(
+            user_id=update.effective_user.id,
+            username=update.effective_user.username or update.effective_user.first_name,
+            action="subscription_required"
+        )
         await send_subscription_message(update)
         return
 
@@ -60,6 +75,9 @@ async def send_config_file(
     update: Update, context: "ContextTypes.DEFAULT_TYPE", apn: str
 ) -> None:
     """Send configuration file to user."""
+    if not update.effective_user:
+        return
+
     # Get the message object first
     message = get_message_from_update(update)
     if not message:
@@ -90,6 +108,14 @@ async def send_config_file(
                 ),
             )
 
+        # Log successful file send
+        user_logger.log_action(
+            user_id=update.effective_user.id,
+            username=update.effective_user.username or update.effective_user.first_name,
+            action="file_sent",
+            details={"apn_type": apn}
+        )
+
         # Send tutorial link if enabled
         if (
             ENABLE_TUTORIAL_LINKS
@@ -97,9 +123,24 @@ async def send_config_file(
             and YOUTUBE_TUTORIAL_LINKS[0]
         ):
             await message.reply_text(f"📹 آموزش: {YOUTUBE_TUTORIAL_LINKS[0]}")
+            
+            # Log tutorial link sent
+            user_logger.log_action(
+                user_id=update.effective_user.id,
+                username=update.effective_user.username or update.effective_user.first_name,
+                action="tutorial_sent",
+                details={"apn_type": apn}
+            )
 
     except Exception as e:
         logger.error(f"Error sending file: {e}")
+        # Log error
+        user_logger.log_action(
+            user_id=update.effective_user.id,
+            username=update.effective_user.username or update.effective_user.first_name,
+            action="error",
+            details={"error": str(e), "apn_type": apn}
+        )
         await message.reply_text(
             "متأسفانه در ارسال فایل خطایی رخ داد. لطفاً دوباره تلاش کنید."
         )
