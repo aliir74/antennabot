@@ -25,22 +25,27 @@ APN_CONFIGS: Dict[str, Dict[str, str]] = {
     "mci": {
         "file_path": "files/base.mobileconfig",
         "description": "MCI Configuration File",
+        "apn": "mcinet",
     },
     "irancell": {
         "file_path": "files/base.mobileconfig",
         "description": "Irancell Configuration File",
+        "apn": "mtnirancell",
     },
     "rightel": {
         "file_path": "files/base.mobileconfig",
         "description": "Rightel Configuration File",
+        "apn": "RighTel",
     },
     "shatel": {
         "file_path": "files/base.mobileconfig",
         "description": "Shatel Configuration File",
+        "apn": "shatelmobile",
     },
     "samantel": {
         "file_path": "files/base.mobileconfig",
         "description": "Samantel Configuration File",
+        "apn": "samantel",
     },
 }
 
