@@ -1,0 +1,10 @@
+APN Name: rightel
+APN: rightel
+Username: [Leave Empty]
+Password: [Leave Empty]
+Authentication Type: None
+APN Protocol: IPv4
+APN Roaming Protocol: IPv4
+Bearer: Unspecified
+MVNO Type: None
+MVNO Value: [Leave Empty] 
