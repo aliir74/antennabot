@@ -119,7 +119,7 @@ async def send_config_file(
                 file = modified_file
                 sent_message = await message.reply_document(
                     document=file,
-                    filename=f"{apn}_config.txt",
+                    filename=f"{apn}_config.mobileconfig",
                     caption=(
                         f"فایل تنظیمات {apn.upper()} آماده است!\n\n"
                         "🙏 اگر این ربات برای شما مفید بود، می‌توانید از طریق لینک زیر از ما حمایت کنید:\n"
